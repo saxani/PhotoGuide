@@ -11,14 +11,14 @@ import Geocode from "react-geocode";
 import _ from 'lodash';
 
 import { classifyImages } from './Utility.js';
-import config from '../../config.js';
+import configClient from './configClient.js';
 
 import AddressSearch from './Address';
 import PictureUpload from './PictureUpload';
 
 
 // set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
-Geocode.setApiKey(config.API_KEY);
+Geocode.setApiKey(configClient.API_KEY);
 
 var MobileDetect = require('mobile-detect'),
   md = new MobileDetect(navigator.userAgent);

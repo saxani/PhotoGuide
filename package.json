@@ -1,6 +1,10 @@
 {
   "name": "react-node-starter",
   "version": "0.2.0",
+  "engines": {
+    "node": "10.x",
+    "npm": "6.x"
+  },
   "description": "an example for deploying a React + NodeJS app to Heroku",
   "main": "server.js",
   "scripts": {
