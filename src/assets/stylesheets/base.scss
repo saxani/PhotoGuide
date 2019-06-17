@@ -6,3 +6,50 @@
   src: url('../fonts/GT-America-Standard-Thin.ttf') format('truetype'),
     url('../fonts/GT-America-Standard-Thin.otf') format('otf');
 }
+
+
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+
+  background-image: linear-gradient(to right, #ff8177 0%, #ff867a 0%, #ff8c7f 21%, #f99185 52%, #cf556c 78%, #b12a5b 100%);
+}
+
+.hide {
+  display: none !important;
+}
+
+.container {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+  color: #eee;
+}
+
+.MuiInputBase-input {
+  color: #eee !important;
+}
+
+.headline {
+  width: 100%;
+  color: #eee;
+}
+
+.search-address {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.drag-and-drop {
+  color: #eee;
+  font-size: 16px;
+  height: 300px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #eee;
+  border-radius: 5px;
+}

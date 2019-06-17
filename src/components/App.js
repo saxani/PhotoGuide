@@ -1,25 +1,29 @@
 import '../assets/stylesheets/base.scss'
 
 import React, { Component } from 'react';
-import * as Utility from './Utility.js';
+import ReactDOM from 'react-dom';
+
+import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+
 import Geocode from "react-geocode";
 import _ from 'lodash';
-import { Button } from 'react-bootstrap';
+
+import { classifyImages } from './Utility.js';
 import config from '../../config.js';
 
 import AddressSearch from './Address';
-import PointsOfInterest from './PointsOfInterest';
+import PictureUpload from './PictureUpload';
 
 
 // set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
 Geocode.setApiKey(config.API_KEY);
 
-// Enable or disable logs. Its optional.
-Geocode.enableDebug();
-
-
 var MobileDetect = require('mobile-detect'),
   md = new MobileDetect(navigator.userAgent);
+
+var trained = false;
 
 
 /* ---------------------------------------------------- */
@@ -33,15 +37,11 @@ class App extends Component {
       address: null,
       location: null,
       lat: null,
-      lng: null
+      lng: null,
+      isTrained: false
     };
 
     this.getPlaces = this.getPlaces.bind(this);
-    this.getImages = this.getImages.bind(this);
-  }
-
-  componentDidMount() {
-
   }
 
   addressSearch(term) {
@@ -73,52 +73,36 @@ class App extends Component {
       }, function (error) { console.log('error- ' + error) })
       .then(function (data) {
         if (data) {
-          console.log(data);
+          const trained = classifyImages(data, trained);
+
+          setTimeout(function(){
+            this.setState({
+              isTrained : true
+            });
+          }.bind(this), 3000);
         } else {
           console.log('didnt get any data');
         }
-      });
-  }
-
-  getImages() {
-    fetch('/getImageSearch')
-    .then(function (response) {
-      return response.json()
-    }, function (error) { console.log('error- ' + error) })
-    .then(function (data) {
-      if (data) {
-        console.log(data);
-      } else {
-        console.log('didnt get any data');
-      }
-    });
+      }.bind(this));
   }
 
   render() {
     const addressSearch = _.debounce((term) => {this.addressSearch(term)}, 300);
-    // const getPlaces = this.getPlaces('/getPlacesData', this.callback);
 
     return (
-        <div>
+        <Container maxWidth="sm" className="container">
+          <Typography variant="h4" component="h1" className="headline" gutterBottom>
+            Photo Guide
+          </Typography>
           <AddressSearch onSearchTermChange = {addressSearch} />
-          <div className = "new-address">{this.state.address}</div>
-          <Button variant="primary" onClick = {this.getPlaces}>Find nearby stuff!</Button>
-          <Button variant="primary" onClick = {this.getImages}>Get images!</Button>
-
-        </div>
+          <Typography variant="h5" align="center" color="primary" paragraph className="new-address">
+            {this.state.address}
+          </Typography>
+          <Button variant="contained" color="primary" className="search-button" onClick = {this.getPlaces}>Find nearby stuff!</Button>
+          {this.state.isTrained && <PictureUpload />}
+        </Container>
     )
   }
-
-  //
-  // {!isLoading && <UploadPhoto hasThingINeed={hasThingINeed}/>}
-
-  /* --------------- Networking Methods --------------- */
-
-  /*
-  Example calls:
-    this.getRequestToServer('/getLocalData', this.callback.bind(this))
-  */
-
 };
 
 export default App;
