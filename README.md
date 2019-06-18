@@ -13,9 +13,10 @@ When I visit a new city, I am generally well aware of the most famous points of 
 - After the training is complete, the user can upload a photo, and the app will return it's name (if it's recognized), and other relevant info.
 
 ## Current Limitations:
-- Ideally the machine learning would happen on the server side, but ml5.js is only client side at the moment (will try to migrate to tensorflow)
-- There are many issues with cross-origin requests to get the images, though roughly 50% of them are accepted
-- Since incorporating the machine learning tests into the React app, ml5.js is throwing a backend error that needs to be solved. So the training is incomplete
+- Ideally the machine learning would happen on the server side, but ml5.js is only client side at the moment (will eventually migrate to TensorFlow)
+- There are many issues with cross-origin requests to get the images, though roughly 50% of them are accepted and are analyzed
+- Since incorporating the machine learning portions of this project into the React app, ml5.js is throwing a backend error that needs to be solved (it is an error from TensorFlow, not ml5.js). So the training is incomplete
 
 
 ## Live Site
+- You can see the current build here: https://shrouded-cliffs-39295.herokuapp.com/
