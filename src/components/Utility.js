@@ -1,97 +1,78 @@
 // Importing ml5.js as ml5
 import * as ml5 from "ml5";
 
-
 export const classifyImages = (data) => {
+  console.log(data);
   const featureExtractor = ml5.featureExtractor("MobileNet", modelLoaded(data));
   const classifier = featureExtractor.classification();
-  let success = 0;
-  let failure = 0;
-  let promises = [];
 
   function modelLoaded(data) {
-    console.log('model loaded!');
+      console.log('model loaded!');
 
-    data.map(function (place) {
+    let classifyData = data.map(function (place) {
       Object.keys(place)
-      .forEach(function eachKey(key) {
+      .forEach(async function eachKey(key) {
         const links = place[key];
         for (let i = 0; i < links.length; i++) {
-          makeCORSRequest(links[i], key);
+          await corsProxy(links[i], key);
         }
       });
     });
 
-    setTimeout(train, 1000);
-
+    setTimeout(function(){
+      train();
+    }, 30000);
   }
 
-  function createCORSRequest(method, url) {
-      var xhr = new XMLHttpRequest();
-      if ("withCredentials" in xhr) {
-        // Check if the XMLHttpRequest object has a "withCredentials" property.
-        // "withCredentials" only exists on XMLHTTPRequest2 objects.
-        xhr.open(method, url, true);
-      } else {
+  async function corsProxy(url, place) {
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
-        // Otherwise, CORS is not supported by the browser.
-        xhr = null;
-      }
+    const response = await fetch(proxyurl + url)
+    .then(validateResponse)
+    .then(readResponseAsBlob)
+    .then((responseAsBlob) => addImageToClassifer(responseAsBlob, place))
+    .catch(logError);
+  }
 
-      return xhr;
+  function validateResponse(response) {
+    if (!response.ok) {
+      throw Error(response.statusText);
     }
+    return response;
+  }
 
+  function readResponseAsBlob(response) {
+    return response.blob();
+  }
 
+  function logError(error) {
+    console.log('Looks like there was a problem: \n', error);
+  }
 
-  // Make the actual CORS request.
-  function makeCORSRequest(url, place) {
+  function addImageToClassifer(responseAsBlob, place) {
+    return new Promise(resolve => {
+      let url = URL.createObjectURL(responseAsBlob);
+      let img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = url;
 
-    var xhr = createCORSRequest('GET', url);
-    if (!xhr) {
-      console.log('CORS not supported');
-      return;
-    }
-
-    // Response handlers.
-    xhr.onload = function() {
-
-      let newImageClassifier = new Promise(resolve => {
-        var img = new Image();
-        img.crossOrigin = "anonymous";
-        img.src = url;
-
-        img.addEventListener('load', () => {
-          classifier.addImage(img, place), () => {
-              resolve();
-              img = null;
-          };
+      img.addEventListener('load', () => {
+        classifier.addImage(img, place, () => {
+          console.log('added: ' + place);
+          resolve();
         });
-
       });
-
-      success++;
-    };
-
-    xhr.onerror = function() {
-      console.log('Whoops, there was an error making the request.');
-      failure++;
-    };
-
-    xhr.send();
+    });
   }
 
   function train() {
-    console.log('images loaded!');
-    console.log(success, failure);
-    console.log('Training Complete');
-    return true;
-    //classifier.train(whileTraining);
+    classifier.train(whileTraining);
   }
 
   function whileTraining(loss) {
     if (loss == null) {
-
-
+      console.log('Training Complete');
+      return {isTrained: true, isLoading: false};
     } else {
       console.log(loss);
     }

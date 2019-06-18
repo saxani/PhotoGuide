@@ -15,6 +15,7 @@ import configClient from './configClient.js';
 
 import AddressSearch from './Address';
 import PictureUpload from './PictureUpload';
+import Loading from './Loading';
 
 
 // set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
@@ -38,6 +39,7 @@ class App extends Component {
       location: null,
       lat: null,
       lng: null,
+      isLoading: false,
       isTrained: false
     };
 
@@ -73,13 +75,8 @@ class App extends Component {
       }, function (error) { console.log('error- ' + error) })
       .then(function (data) {
         if (data) {
-          const trained = classifyImages(data, trained);
-
-          setTimeout(function(){
-            this.setState({
-              isTrained : true
-            });
-          }.bind(this), 3000);
+          this.setState({isLoading: true});
+          this.setState(classifyImages(data));
         } else {
           console.log('didnt get any data');
         }
@@ -94,11 +91,13 @@ class App extends Component {
           <Typography variant="h4" component="h1" className="headline" gutterBottom>
             Photo Guide
           </Typography>
-          <AddressSearch onSearchTermChange = {addressSearch} />
-          <Typography variant="h5" align="center" color="primary" paragraph className="new-address">
+          {!this.state.isLoading && !this.state.isTrained && <AddressSearch onSearchTermChange = {addressSearch} />}
+          {!this.state.isLoading && !this.state.isTrained && <Typography variant="h5" align="center" color="primary" paragraph className="new-address">
             {this.state.address}
-          </Typography>
-          <Button variant="contained" color="primary" className="search-button" onClick = {this.getPlaces}>Find nearby stuff!</Button>
+          </Typography>}
+          {!this.state.isLoading && !this.state.isTrained && <Button variant="contained" color="primary" className="search-button"
+            onClick = {this.getPlaces}>Find nearby stuff!</Button>}
+          {this.state.isLoading && <Loading />}
           {this.state.isTrained && <PictureUpload />}
         </Container>
     )

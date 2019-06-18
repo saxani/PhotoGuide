@@ -92,6 +92,8 @@ async function imageSearch(query, index, urls) {
       auth: "AIzaSyAi2TGFCA7tVP2rHrDMG4FugLc6WJk3i54",
       searchType: "image",
       imgColorType: "color",
+      rights: "cc_publicdomain, cc_noncommercial",
+      imgType: "photo",
       start: index
     });
 
