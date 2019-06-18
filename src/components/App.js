@@ -19,7 +19,7 @@ import Loading from './Loading';
 
 
 // set Google Maps Geocoding API for purposes of quota management. Its optional but recommended.
-Geocode.setApiKey(configClient.API_KEY);
+Geocode.setApiKey('AIzaSyAfmVgaJYfVmyGe7NqIrkre8yE4HYNfJhI');
 
 var MobileDetect = require('mobile-detect'),
   md = new MobileDetect(navigator.userAgent);
