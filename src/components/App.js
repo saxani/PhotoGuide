@@ -11,7 +11,6 @@ import Geocode from "react-geocode";
 import _ from 'lodash';
 
 import { classifyImages } from './Utility.js';
-import configClient from './configClient.js';
 
 import AddressSearch from './Address';
 import PictureUpload from './PictureUpload';
