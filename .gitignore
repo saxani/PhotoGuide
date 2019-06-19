@@ -3,3 +3,5 @@ node_modules/
 *.DS_Store
 dist/bundle.js
 .env
+config.js
+configClient.js
