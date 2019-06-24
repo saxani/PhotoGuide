@@ -7,8 +7,6 @@ let username1 = process.env.USERNAME,
 var admins = {}
 admins[username1] = { password: password1 }
 
-
-
 module.exports = function (request, response, next) {
   var user = auth(request);
   if (!user || !admins[user.name] || admins[user.name].password !== user.pass) {
