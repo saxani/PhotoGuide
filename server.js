@@ -64,6 +64,17 @@ app.get('/getGoogleKey', function(request, response){
 
 });
 
+app.post('/getPlaceInfo', function(request, response){
+  console.log(request);
+  googleMapsClient.place({
+    placeid: request.body
+  }, function(err, data) {
+    if (!err) {
+      console.log(data);
+      //response.json(data);
+    }
+  });
+});
 
 app.post('/getPlacesData', async function(request, response){
   googleMapsClient.places({
@@ -72,15 +83,18 @@ app.post('/getPlacesData', async function(request, response){
     query: 'point of interest'
   }, async function(err, data) {
     if (!err) {
-      const places = data.json.results.map(item => item.name)
-      const urls = await Promise.all(places.map(async function (place) {
-        const newUrls= await imageSearch(place, request.body.city, 1, []);
-        return {
-          [place]: newUrls
-        }
+      const places = data.json.results.map(item => item.name);
+      const placeIDs = data.json.results.map(item => item.place_id);
+      const placeInfo = await Promise.all(places.map(async function (placeName, index) {
+        const newUrls= await imageSearch(placeName, request.body.city, 1, []);
+        const place = new Object();
+        place.name = placeName;
+        place.id = placeIDs[index];
+        place.images = newUrls;
+        return place;
       }));
 
-      response.json(urls);
+      response.json(placeInfo);
     }
   });
 });

@@ -48,12 +48,6 @@ body {
   width: 100%;
 }
 
-.drag-and-drop {
-  color: #eee;
-  font-size: 16px;
-  height: 300px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #eee;
-  border-radius: 5px;
+.MuiDialog-paper {
+  background-image: linear-gradient(to right, #2a8db1 0%, #5cb12a 100%);
 }

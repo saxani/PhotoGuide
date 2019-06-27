@@ -14,8 +14,9 @@ When I visit a new city, I am generally well aware of the most famous points of 
 
 ## Current Limitations:
 - Ideally the machine learning would happen on the server side, but ml5.js is only client side at the moment (will eventually migrate to TensorFlow)
+- As a result, this process crashes on mobile at the moment
 - Not all images retrieved from the custom search are able to be turned into image elements for ml5.js to classify, and errors will show up on the JS console (which will also be fixed by migrating to TensorFlow)
-- Console logs are still being shown to follow the process of the data, as the front end continues to be cleaned up
+- The order that Google returns points of interest are not based on significance, so the results are fairly random. I will be getting a google map with markers of the returned places working, so the user can see what it finds. But, in the mean time, there's a console log showing the places returned. If you were to google search any of these locations, scroll down well past what the image search would return, and drag and drop an image, it will likely give the right response!
 
 
 ## Live Site

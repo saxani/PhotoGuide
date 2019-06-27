@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useDropzone} from 'react-dropzone';
 import Typography from '@material-ui/core/Typography';
+import Container from '@material-ui/core/Container';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import { testImages } from './Classifier';
 
 const titleStyle = {
@@ -37,14 +40,20 @@ const dropper = {
   borderWidth: '1px'
 }
 
+const closeButton = {
+  position: 'absolute',
+  top: '20px',
+  left: '20px'
+}
+
 async function testTheImage(img){
   const result = await testImages(img);
-  document.querySelector('.answer').innerHTML = result[0].label;
+  const confidence = Math.round(result[0].confidence * 100);
+  document.querySelector('.answer').innerHTML = result[0].label + '<br />' + confidence + '% confidence';
 }
 
 
-function PictureUpload(classifier) {
-  console.log(classifier);
+function PictureUpload(props) {
   const [files, setFiles] = useState([]);
 
   const {getRootProps, getInputProps} = useDropzone({
@@ -81,21 +90,26 @@ function PictureUpload(classifier) {
   }, [files]);
 
   return (
-    <section className="container">
-      <Typography variant="h5" align="center" style={titleStyle}>
-        Your city is loaded!
-      </Typography>
-      <div {...getRootProps({className: 'dropzone'})} style={dropper}>
-        <input {...getInputProps()} />
-        <Typography variant="h5" align="center">
-        <p>Drag 'n' drop some files here, or click to select files</p>
+    <Container maxWidth="sm" className="container">
+      <section className="container">
+        <IconButton edge="start" color="inherit" onClick={props.onClose} aria-label="Close" style={closeButton}>
+          <CloseIcon />
+        </IconButton>
+        <Typography variant="h5" align="center" className="headline" style={titleStyle}>
+          The area around you is loaded!
         </Typography>
-        {thumbs}
-      </div>
-      <Typography variant="h5" align="center">
-      <div className="answer"></div>
-      </Typography>
-    </section>
+        <div {...getRootProps({className: 'dropzone'})} style={dropper}>
+          <input {...getInputProps()} />
+          <Typography variant="h5" align="center">
+          <p>Think something you saw is a point of interest? Drag 'n' drop a photo here or click to upload and see!</p>
+          </Typography>
+          {thumbs}
+        </div>
+        <Typography variant="h5" align="center">
+        <div className="answer"></div>
+        </Typography>
+      </section>
+    </Container>
   );
 }
 

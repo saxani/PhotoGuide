@@ -1,33 +1,56 @@
 import * as ml5 from "ml5";
 const featureExtractor = ml5.featureExtractor("MobileNet");
 let classifier = featureExtractor.classification();
+let receivedData;
 
 export async function testImages(img) {
   let result = await classifier.classify(img, gotResults);
   return result;
+
+  // TODO: this is still a work in progress, to send and receive detailed place data.
+  //
+  // let placeInfo;
+  //
+  // receivedData.map(async function(place){
+  //   if (place.name == result[0].label) {
+  //     placeInfo = await getPlaceInfo(place.id);
+  //   }
+  // });
+  //
+  // return placeInfo;
 }
 
-  function gotResults(error, result) {
-    return new Promise(resolve => {
-      if (error) {
-        console.error(error);
-        resolve(error);
-      } else {
-        console.log (result);
-        resolve(result);
-      }
+function getPlaceInfo(id) {
+  console.log(id);
+  fetch('/getPlaceInfo', {
+    headers : {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+     method: 'POST',
+     body: JSON.stringify(id)
+    })
+    .then(function (response) {
+      //return response.json();
     });
-  }
+}
+
+function gotResults(error, result) {
+  return new Promise(resolve => {
+    if (error) {
+      resolve(error);
+    } else {
+      resolve(result);
+    }
+  });
+}
 
 
 export async function classifyImages(data) {
-  console.log(data);
+  receivedData = data;
   featureExtractor.config.numLabels = data.length;
   classifier = await addImagesToClassifier(data);
-  console.log('back from classifying');
   await classifier.train(whileTraining);
-  console.log('back from training');
-
   return classifier;
 }
 
@@ -35,15 +58,13 @@ async function addImagesToClassifier(data) {
   let promises = [];
 
   data.map(function(place) {
-    const placeName = Object.keys(place)[0];
-    place[placeName].map(function(imgURL) {
-      promises.push(corsProxy(imgURL, placeName)
-      .then((blob) => addImage(blob, placeName)));
+    place.images.map(function(imgURL) {
+      promises.push(corsProxy(imgURL, place.name)
+      .then((blob) => addImage(blob, place.name)));
     })
   });
 
   const results = await Promise.all(promises);
-  console.log('added all promises');
   return classifier;
 }
 
@@ -94,10 +115,6 @@ function logError(error) {
   console.log('Looks like there was a problem: \n', error);
 }
 
-function whileTraining(loss) {
-  if (loss == null) {
-    console.log('Training Complete');
-  } else {
-    console.log(loss);
-  }
+function whileTraining(loss){
+  //Nothing to do
 }
